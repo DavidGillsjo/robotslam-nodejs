@@ -1,10 +1,22 @@
-db:
-  image: postgres
-myapp:
-  build: .
-  links:
-    - db
-  environment:
-    - PGHOST=db
-    - PGDATABASE=postgres
-    - PGUSER=postgres
+version: "3"
+services:
+  db:
+    image: postgres
+    volumes:
+      - "/tmp/dbdata:/var/lib/postgresql/data"
+    environment:
+      - POSTGRES_DB=robotslam
+
+  robotslam-server:
+    build: .
+    depends_on:
+      - db
+    links:
+      - db
+    ports:
+      - "80:3000"
+    environment:
+      - PGHOST=db
+      - PGUSER=postgres
+      - ROS_MASTER_URI=http://robotslam_nvidia:11311/
+      - NODE_ENV=docker

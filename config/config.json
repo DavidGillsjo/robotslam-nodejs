@@ -7,6 +7,14 @@
     "dialect": "postgres",
     "migrationStorageTableName": "sequelize_meta"
   },
+  "docker": {
+    "username": "postgres",
+    "password": null,
+    "database": "robotslam",
+    "host": "db",
+    "dialect": "postgres",
+    "migrationStorageTableName": "sequelize_meta"
+  },
   "test": {
     "username": "root",
     "password": null,
