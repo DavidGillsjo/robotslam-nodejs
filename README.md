@@ -2,6 +2,9 @@
 
 This is the RobotSlam Server, written in Node.JS using ECMAScript 2017.
 
+## Using docker to run locally:
+`docker-compose up`
+
 ## Requirements
 * Node v7.6
 * Postgres v9.5 (with PostGIS)
