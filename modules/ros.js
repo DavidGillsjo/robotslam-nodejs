@@ -15,11 +15,21 @@ class RosManager {
 
     this.connected = false;
     this.reconnectInterval = 5000;
+    this.rosbag_topics = ['/scan', '/odom'];
 
     this.ros.on('connection', () => {
       console.log('Connected to websocket server.');
       this.connected = true;
-      this.moveBaseClient = new MoveBaseClient(this.ros);
+      this.startCollectionClient = new roslib.Service({
+        ros : this.ros,
+        name : '/data_collector/start',
+        serviceType : 'robotslam_data_collection/Start'
+        });
+      this.endCollectionClient = new roslib.Service({
+        ros : this.ros,
+        name : '/data_collector/end',
+        serviceType : 'std_srvs/Trigger'
+        });
     });
 
     this.ros.on('error', (error) => {
@@ -58,11 +68,22 @@ class RosManager {
       throw 'Already active explore';
     }
 
+    var request = new roslib.ServiceRequest({
+      name : "exploration",
+      topics : this.rosbag_topics,
+      store_rosbag : true
+      });
+
+    this.startCollectionClient.callService(request, function(result) {
+      if (!result.success) {
+        throw "Data collection service call failed:" + result.message
+      }
+    });
+    
     this.active = true;
     this.mode = 0;
     this.map = map;
     this.measurementInstance = await this.wifiScanner.start(map);
-    this.moveBaseClient.moveTo(); // default, we don't care
   }
 
   /*
